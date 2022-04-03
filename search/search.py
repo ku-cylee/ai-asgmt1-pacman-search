@@ -72,42 +72,8 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
 
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    "*** YOUR CODE HERE ***"
-    paths = util.Stack()
-    paths.push([(problem.getStartState(), 'Stop', 0)])
-    visited_states = []
-
-    while not paths.isEmpty():
-        current_path = paths.pop()
-        current_state = current_path[-1][0]
-        
-        if problem.isGoalState(current_state):
-            return [path[1] for path in current_path[1:]]
-
-        visited_states.append(current_state)
-        for successor in problem.getSuccessors(current_state):
-            if successor[0] not in visited_states:
-                paths.push(current_path + [successor])
-
-
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    paths = util.Queue()
+def treeSearch(problem, paths):
     paths.push([(problem.getStartState(), 'Stop', 0)])
     visited_states = []
 
@@ -128,31 +94,35 @@ def breadthFirstSearch(problem):
                 paths.push(current_path + [successor_node])
 
 
+def depthFirstSearch(problem):
+    """
+    Search the deepest nodes in the search tree first.
+
+    Your search algorithm needs to return a list of actions that reaches the
+    goal. Make sure to implement a graph search algorithm.
+
+    To get started, you might want to try some of these simple commands to
+    understand the search problem that is being passed in:
+
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    """
+    "*** YOUR CODE HERE ***"
+    return treeSearch(problem, util.Stack())
+
+
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
+    return treeSearch(problem, util.Queue())
+
+
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     cost_function = lambda path: problem.getCostOfActions(p[1] for p in path[1:])
-
-    paths = util.PriorityQueueWithFunction(cost_function)
-    paths.push([(problem.getStartState(), 'Stop', 0)])
-    visited_states = []
-
-    while not paths.isEmpty():
-        current_path = paths.pop()
-        current_state = current_path[-1][0]
-        
-        if problem.isGoalState(current_state):
-            return [path[1] for path in current_path[1:]]
-
-        if current_state in visited_states:
-            continue
-
-        visited_states.append(current_state)
-
-        for successor_node in problem.getSuccessors(current_state):
-            if successor_node[0] not in visited_states:
-                successor_path = current_path + [successor_node]
-                paths.push(successor_path)
+    return treeSearch(problem, util.PriorityQueueWithFunction(cost_function))
 
 
 def nullHeuristic(state, problem=None):
