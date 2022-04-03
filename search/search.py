@@ -118,10 +118,15 @@ def breadthFirstSearch(problem):
         if problem.isGoalState(current_state):
             return [path[1] for path in current_path[1:]]
 
+        if current_state in visited_states:
+            continue
+
         visited_states.append(current_state)
-        for successor in problem.getSuccessors(current_state):
-            if successor[0] not in visited_states:
-                paths.push(current_path + [successor])
+
+        for successor_node in problem.getSuccessors(current_state):
+            if successor_node[0] not in visited_states:
+                paths.push(current_path + [successor_node])
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
